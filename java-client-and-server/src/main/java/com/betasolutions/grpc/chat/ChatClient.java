@@ -71,7 +71,7 @@ public class ChatClient {
             StreamObserver<UserMessage> requestObserver = asyncChatStub.realTimeChat(new StreamObserver<UserMessage>() {
                 @Override
                 public void onNext(UserMessage userMessage) {
-                    System.out.println("\n\n*****Message received: " + userMessage);
+                    System.out.println("\n\n*****Message received\n" + userMessage);
                 }
 
                 @Override

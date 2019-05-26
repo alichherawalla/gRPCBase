@@ -74,7 +74,7 @@ function sendMessage(messageStream) {
 }
 
 function printMessage(userMessage) {
-  console.log('\n\n******Message received: username: ', userMessage.getUsername() +
+  console.log('\n\n******Message received: username\n', userMessage.getUsername() +
     '\ntext_message: ' + userMessage.getTextMessage() +
     '\nid: ' + userMessage.getId() +
     '\ntopic: ' + userMessage.getTopic() +

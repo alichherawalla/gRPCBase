@@ -20,7 +20,7 @@ public class ChatService extends ChatGrpc.ChatImplBase {
             @Override
             public void onNext(UserMessage userMessage) {
                 Collection<StreamObserver<UserMessage>> topicalUserMessageObservers =
-                    addNewObserver(userMessage.getId(), userMessage.getTopic(), userMessage.getClientId(), responseObserver);
+                    addNewObserver(userMessage.getId(), userMessage.getTopic(), userMessage.getClientId(), responseObserver, true);
                 publishMessage(userMessage, topicalUserMessageObservers);
             }
 
@@ -40,7 +40,7 @@ public class ChatService extends ChatGrpc.ChatImplBase {
     public void listUserMessages(ListMessagesRequest request, StreamObserver<UserMessage> responseObserver) {
         ArrayList<UserMessage> userMessages = getTopicalUserMessages(request.getTopic());
         userMessages.forEach(responseObserver::onNext);
-        addNewObserver(request.getCurrentId(), request.getTopic(), request.getClientId(), responseObserver);
+        addNewObserver(request.getCurrentId(), request.getTopic(), request.getClientId(), responseObserver, false);
     }
 
 
@@ -84,7 +84,7 @@ public class ChatService extends ChatGrpc.ChatImplBase {
     }
 
     private Collection<StreamObserver<UserMessage>> addNewObserver(long currentId, String topic, String clientId,
-                                                                   StreamObserver<UserMessage> responseObserver) {
+                                                                   StreamObserver<UserMessage> responseObserver, boolean listMessages) {
         // getting all the observers for this topicName
         HashMap<String, StreamObserver<UserMessage>> observers = getTopicalUserMessageObservers(topic);
         if (observers.containsKey(clientId)) {
@@ -92,6 +92,15 @@ public class ChatService extends ChatGrpc.ChatImplBase {
         } else {
             observers.put(clientId, responseObserver);
             USER_MESSAGE_OBSERVERS.put(topic, observers);
+            ListMessagesRequest listMessagesRequest = ListMessagesRequest.newBuilder()
+                .setClientId(clientId)
+                .setCurrentId(currentId)
+                .setTopic(topic)
+                .setMaxPageSize(100)
+                .build();
+            if (listMessages) {
+                listUserMessages(listMessagesRequest, responseObserver);
+            }
             return observers.values();
         }
     }

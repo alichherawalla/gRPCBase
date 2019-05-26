@@ -32,8 +32,8 @@ CLIENT_ID = str(uuid.uuid4())
 
 def stream_messages(messages):
     for message in messages:
-        print("\n\nMessage received %s %s %s %s %s" % (message.username, message.topic, message.text_message,
-                                                       message.id, message.client_id))
+        print("\n\n******Message received \nusername: %s\ntext_message: %s \nid: %s\ntopic: %s \nclient_id:%s"
+              % (message.username, message.text_message, message.id, message.topic, message.client_id))
 
 
 def list_messages(stub, topic):
